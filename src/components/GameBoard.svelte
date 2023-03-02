@@ -1,6 +1,7 @@
 <script>
     import { tick, onMount } from "svelte";
     import Cell from "./Cell.svelte";
+    import GameControls from "./GameControls.svelte";
 
     const SIZE = 20;
     const DIRECTIONS = {
@@ -9,6 +10,7 @@
         LEFT: { code: "ArrowLeft", x: -1, y: 0, disallow: "ArrowRight" },
         RIGHT: { code: "ArrowRight", x: 1, y: 0, disallow: "ArrowLeft" },
     };
+    const ALLOWED_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
     const KEYS = {
         ArrowUp: "UP",
         ArrowDown: "DOWN",
@@ -55,7 +57,6 @@
     }
 
     function stopGame(status = STATUS.STOPPED) {
-        console.log("setting status:", status);
         currentStatus = status;
     }
 
@@ -140,9 +141,12 @@
     }
 
     function handleKeypress(event) {
+        let keyCode = event.detail ? event.detail.code : event.code
         if (currentStatus === STATUS.RUNNING) {
-            if (event.code !== currentDirection.disallow) {
-                currentDirection = DIRECTIONS[KEYS[event.code]];
+            if (ALLOWED_KEYS.includes(keyCode)) {
+                if (keyCode !== currentDirection.disallow) {
+                    currentDirection = DIRECTIONS[KEYS[keyCode]];
+                }
             }
         }
     }
@@ -150,9 +154,11 @@
 
 <svelte:window on:keydown={handleKeypress} />
 
-<h1 class="text-xl md:text-3xl font-bold mt-20 text-center">🐍 Snake 🐍</h1>
+<h1 class="text-xl md:text-3xl font-bold mt-8 sm:mt-20 text-center">
+    🐍 Snake 🐍
+</h1>
 
-<div class="mt-24 relative flex flex-col items-center justify-center">
+<div class="mt-8 sm:mt-24 relative flex flex-col items-center justify-center">
     {#each cells as y}
         <div class="flex items-center">
             {#each cells as x}
@@ -173,7 +179,7 @@
     {/if}
 </div>
 
-<div class="mt-12 mx-auto flex items-center justify-center">
+<div class="mt-6 sm:mt-12 mx-auto flex flex-col items-center">
     {#if currentStatus === "stopped"}
         <button
             type="button"
@@ -183,10 +189,11 @@
         >
     {/if}
     {#if currentStatus === "running"}
+        <GameControls on:click={handleKeypress} />
         <button
             type="button"
             on:click={() => stopGame()}
-            class="inline-flex items-center rounded-md border border-transparent bg-red-100 px-3 py-2 text-sm font-medium leading-4 text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+            class="mt-8 inline-flex items-center rounded-md border border-transparent bg-red-100 px-3 py-2 text-sm font-medium leading-4 text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
             >Stop Game</button
         >
     {/if}
