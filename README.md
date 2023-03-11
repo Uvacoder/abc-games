@@ -12,6 +12,6 @@ I wanted a reason to play around with Svelte, and snake in the browser seemed li
 
 ### Things I'm considering
 
-- Adding a toggle to make wall collisions end the game, if you want "hard mode".
-- Adding a slider to adjust the speed of the snake.
-- Mobile controls, maybe a virtual keypad?
+- [ ] Adding a toggle to make wall collisions end the game, if you want "hard mode". Wouldn't be hard to implement, but probably won't do it.
+- [X] Adding a slider to adjust the speed of the snake. (Choose from slow/medium/fast)
+- [X] Mobile controls, maybe a virtual keypad? (This is done, but lots of room for improvement)
