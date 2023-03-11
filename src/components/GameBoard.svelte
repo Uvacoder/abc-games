@@ -1,5 +1,4 @@
 <script>
-    import { tick, onMount } from "svelte";
     import Cell from "./Cell.svelte";
     import GameControls from "./GameControls.svelte";
 
@@ -26,6 +25,8 @@
     const cells = [...new Array(SIZE).keys()];
     $: currentDirection = DIRECTIONS.UP;
     $: currentStatus = STATUS.STOPPED;
+    $: score = 0;
+    $: speed = 150;
 
     $: snakeCoordinates = [
         { x: 10, y: 10 },
@@ -40,6 +41,7 @@
     }
 
     function startGame() {
+        score = 0;
         currentStatus = STATUS.RUNNING;
         next();
     }
@@ -63,7 +65,7 @@
     async function next() {
         if (currentStatus === STATUS.RUNNING) {
             moveSnake();
-            await sleep(100);
+            await sleep(speed);
             next();
         }
     }
@@ -106,6 +108,7 @@
             newHead.x === fruitCoordinates.x &&
             newHead.y === fruitCoordinates.y
         ) {
+            score++;
             moveFruit();
             return [newHead, ...snakeCoordinates];
         }
@@ -140,6 +143,10 @@
         fruitCoordinates = newCoordinates;
     }
 
+    function setSpeed(val) {
+        speed = val;
+    }
+
     function handleKeypress(event) {
         let keyCode = event.detail ? event.detail.code : event.code
         if (currentStatus === STATUS.RUNNING) {
@@ -158,7 +165,25 @@
     🐍 Snake 🐍
 </h1>
 
-<div class="mt-8 sm:mt-24 relative flex flex-col items-center justify-center">
+<div class="mt-8 sm:mt-16 relative flex flex-col items-center justify-center">
+    <span class="isolate inline-flex rounded-md shadow-sm mb-12">
+      <button
+            type="button"
+            on:click={() => setSpeed(200)}
+            class={`${speed === 200 ? 'bg-blue-600 text-white ring-blue-600' : 'bg-white text-gray-900 ring-gray-300 hover:bg-gray-50'} relative inline-flex items-center rounded-l-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10 focus:outline-none focus:ring-blue-600`}
+        >Slow</button>
+      <button
+            type="button"
+            on:click={() => setSpeed(150)}
+            class={`${speed === 150 ? 'bg-blue-600 text-white ring-blue-600' : 'bg-white text-gray-900 ring-gray-300 hover:bg-gray-50'} -ml-px relative inline-flex items-center px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10 focus:outline-none focus:ring-blue-600`}
+            >Medium</button>
+      <button
+            type="button"
+            on:click={() => setSpeed(75)}
+            class={`${speed === 75 ? 'bg-blue-600 text-white ring-blue-600' : 'bg-white text-gray-900 ring-gray-300 hover:bg-gray-50'} -ml-px relative inline-flex items-center rounded-r-md px-3 py-2 text-sm font-semibold ring-1 ring-inset focus:z-10 focus:outline-none focus:ring-blue-600`}
+            >Fast</button>
+    </span>
+
     {#each cells as y}
         <div class="flex items-center">
             {#each cells as x}
@@ -179,7 +204,8 @@
     {/if}
 </div>
 
-<div class="mt-6 sm:mt-12 mx-auto flex flex-col items-center">
+<div class="mt-6 sm:mt-8 mx-auto flex flex-col items-center">
+    <div class="mb-6">Score: {score}</div>
     {#if currentStatus === "stopped"}
         <button
             type="button"
