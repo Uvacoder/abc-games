@@ -1,4 +1,4 @@
-# snake
+# 🐍 snake
 
 [Play in the browser](https://snake.mcbrid.es)
 
