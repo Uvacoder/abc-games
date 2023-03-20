@@ -28,3 +28,5 @@ I wanted a reason to play around with Svelte, and snake in the browser seemed li
 ---
 
 ## Tic Tac Toe
+
+It's just tic-tac-toe. Player X starts, then player O goes next. When someone wins, the other person starts the next game. Total wins are kept track of on the page.
