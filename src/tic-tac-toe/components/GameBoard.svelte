@@ -6,12 +6,25 @@
     let totalWinsO = 0;
     let showNewGameButton = false;
     let showTieBanner = false;
+    $: gameOver = showNewGameButton === true && showTieBanner === false;
 
     // game setup
     let cells = [
-        [null, null, null],
-        [null, null, null],
-        [null, null, null],
+        [
+            { value: null, color: "text-gray-700" },
+            { value: null, color: "text-gray-700" },
+            { value: null, color: "text-gray-700" },
+        ],
+        [
+            { value: null, color: "text-gray-700" },
+            { value: null, color: "text-gray-700" },
+            { value: null, color: "text-gray-700" },
+        ],
+        [
+            { value: null, color: "text-gray-700" },
+            { value: null, color: "text-gray-700" },
+            { value: null, color: "text-gray-700" },
+        ],
     ];
     let currentPlayer = "x";
 
@@ -34,16 +47,29 @@
 
     function resetGame() {
         cells = [
-            [null, null, null],
-            [null, null, null],
-            [null, null, null],
+            [
+                { value: null, color: "text-gray-700" },
+                { value: null, color: "text-gray-700" },
+                { value: null, color: "text-gray-700" },
+            ],
+            [
+                { value: null, color: "text-gray-700" },
+                { value: null, color: "text-gray-700" },
+                { value: null, color: "text-gray-700" },
+            ],
+            [
+                { value: null, color: "text-gray-700" },
+                { value: null, color: "text-gray-700" },
+                { value: null, color: "text-gray-700" },
+            ],
         ];
         showNewGameButton = false;
         showTieBanner = false;
+        setNextTurn();
     }
 
     function setCellValue(x, y) {
-        cells[x][y] = currentPlayer;
+        cells[x][y] = { value: currentPlayer, color: "text-gray-700" };
     }
 
     function checkForWinner(x, y) {
@@ -53,20 +79,26 @@
         // check columns
         // lock the row
         if (
-            cells[row][0] === currentPlayer &&
-            cells[row][1] === currentPlayer &&
-            cells[row][2] === currentPlayer
+            cells[row][0].value === currentPlayer &&
+            cells[row][1].value === currentPlayer &&
+            cells[row][2].value === currentPlayer
         ) {
+            cells[row][0].color = "text-emerald-500";
+            cells[row][1].color = "text-emerald-500";
+            cells[row][2].color = "text-emerald-500";
             return true;
         }
 
         // check rows
         // lock the column
         if (
-            cells[0][col] === currentPlayer &&
-            cells[1][col] === currentPlayer &&
-            cells[2][col] === currentPlayer
+            cells[0][col].value === currentPlayer &&
+            cells[1][col].value === currentPlayer &&
+            cells[2][col].value === currentPlayer
         ) {
+            cells[0][col].color = "text-emerald-500";
+            cells[1][col].color = "text-emerald-500";
+            cells[2][col].color = "text-emerald-500";
             return true;
         }
 
@@ -77,19 +109,25 @@
         }
         // check top left to bottom right
         if (
-            cells[0][0] === currentPlayer &&
-            cells[1][1] === currentPlayer &&
-            cells[2][2] === currentPlayer
+            cells[0][0].value === currentPlayer &&
+            cells[1][1].value === currentPlayer &&
+            cells[2][2].value === currentPlayer
         ) {
+            cells[0][0].color = "text-emerald-500";
+            cells[1][1].color = "text-emerald-500";
+            cells[2][2].color = "text-emerald-500";
             return true;
         }
 
         // check top right to bottom left
         if (
-            cells[0][2] === currentPlayer &&
-            cells[1][1] === currentPlayer &&
-            cells[2][0] === currentPlayer
+            cells[0][2].value === currentPlayer &&
+            cells[1][1].value === currentPlayer &&
+            cells[2][0].value === currentPlayer
         ) {
+            cells[0][2].color = "text-emerald-500";
+            cells[1][1].color = "text-emerald-500";
+            cells[2][0].color = "text-emerald-500";
             return true;
         }
 
@@ -99,11 +137,13 @@
     function checkForTie() {
         let remainingCells = cells
             .flatMap((c) => c)
-            .filter((c) => c === null).length;
+            .filter((c) => c.value === null).length;
         if (remainingCells === 0) {
             showTieBanner = true;
             showNewGameButton = true;
+            return true;
         }
+        return false;
     }
 
     // handlers
@@ -115,7 +155,10 @@
         let won = checkForWinner(x, y);
         if (!won) {
             // check if tie
-            checkForTie();
+            const didTie = checkForTie();
+            if (!didTie) {
+                setNextTurn();
+            }
         } else {
             if (currentPlayer === "x") {
                 incrementWinsX();
@@ -125,7 +168,6 @@
             showNewGameButton = true;
         }
         // always set next turn, so the loser gets to start the next game.
-        setNextTurn();
     }
 </script>
 
@@ -141,7 +183,9 @@
                     <Cell
                         xCoordinate={xIndex}
                         yCoordinate={yIndex}
-                        value={cells[xIndex][yIndex]}
+                        value={cells[xIndex][yIndex].value}
+                        color={cells[xIndex][yIndex].color}
+                        {currentPlayer}
                         on:click={() => handleClick(xIndex, yIndex)}
                     />
                 {/each}
@@ -150,20 +194,18 @@
     </div>
 
     {#if showNewGameButton === true}
-        <div
-            class="absolute top-1/2 transform -translate-y-1/2 -rotate-6 bg-blue-600 text-white font-bold text-2xl px-6 py-2 uppercase"
-        >
+        <p class="bg-blue-600 text-white font-bold text-xl px-3 py-1 uppercase">
             {#if showTieBanner === true}
-                <p>It's a tie!</p>
+                It's a tie!
             {:else}
-                <p><span class="uppercase">{currentPlayer}</span> Wins!</p>
+                <span class="uppercase">{currentPlayer}</span> Wins!
             {/if}
-        </div>
+        </p>
+    {:else}
+        <p class="text-xl font-bold px-3 py-1 text-white bg-red-600">
+            Current player: <span class="uppercase">{currentPlayer}</span>
+        </p>
     {/if}
-
-    <p class="text-xl font-bold px-3 py-1 text-white bg-red-600">
-        Current player: <span class="uppercase">{currentPlayer}</span>
-    </p>
 </div>
 
 <div class="mt-6 sm:mt-8 mx-auto flex flex-col items-center">
