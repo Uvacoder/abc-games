@@ -171,12 +171,12 @@
     }
 </script>
 
-<h1 class="text-xl md:text-3xl font-bold mt-8 sm:mt-20 text-center">
+<h1 class="text-xl md:text-3xl font-bold mt-8 lg:mt-20 text-center">
     Tic Tac Toe
 </h1>
 
-<div class="mt-8 sm:mt-16 relative flex flex-col items-center justify-center">
-    <div class="my-20">
+<div class="relative flex flex-col items-center justify-center">
+    <div class="my-8 sm:my-20">
         {#each cells as y, yIndex}
             <div class="flex items-center justify-center">
                 {#each y as _, xIndex}
@@ -208,7 +208,7 @@
     {/if}
 </div>
 
-<div class="mt-6 sm:mt-8 mx-auto flex flex-col items-center">
+<div class="mt-6 lg:mt-8 mx-auto flex flex-col items-center">
     <h2 class="text-lg font-bold mb-2">Scores</h2>
     <div
         class="flex items-center border border-gray-300 divide-x divide-gray-300"
@@ -218,7 +218,7 @@
     </div>
 </div>
 
-<div class="mt-6 sm:mt-8 mx-auto flex flex-col items-center">
+<div class="mt-6 lg:mt-8 mx-auto flex flex-col items-center">
     {#if showNewGameButton}
         <button
             type="button"
